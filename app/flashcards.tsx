@@ -14,6 +14,7 @@ import { FlipCard } from "../components/FlipCard";
 import { SparkyMascot } from "../components/SparkyMascot";
 import { Colors } from "../constants/colors";
 import { generateFlashcards } from "../services/openai";
+import { useStudyStore } from "../stores/useStudyStore";
 
 interface CardData {
   front: string;
@@ -26,6 +27,8 @@ export default function FlashcardsScreen() {
   const [loading, setLoading] = useState(false);
   const [cards, setCards] = useState<CardData[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { saveDeck } = useStudyStore();
+  const [isSaved, setIsSaved] = useState(false);
 
   const handleGenerate = async () => {
     if (topic.trim().length < 3) return;
@@ -34,11 +37,33 @@ export default function FlashcardsScreen() {
       const deck = await generateFlashcards(topic);
       setCards(deck);
       setCurrentIndex(0);
+      setIsSaved(false);
     } catch (error) {
       alert("Sparky couldn't generate the cards. Check your connection!");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSaveDeck = () => {
+    if (isSaved) return;
+
+    // Add a unique ID to each card to satisfy the Zustand store requirements
+    const formattedCards = cards.map((card, index) => ({
+      id: `${Date.now()}-${index}`,
+      front: card.front,
+      back: card.back,
+    }));
+
+    saveDeck({
+      id: Date.now().toString(),
+      title: topic,
+      cards: formattedCards,
+      createdAt: new Date().toISOString(),
+    });
+
+    setIsSaved(true);
+    alert("Deck saved to your Library! 📚");
   };
 
   const nextCard = () => {
@@ -93,6 +118,27 @@ export default function FlashcardsScreen() {
       {/* State 3: Viewing Cards */}
       {cards.length > 0 && !loading && (
         <View style={styles.deckContainer}>
+          <TouchableOpacity
+            style={{
+              position: "absolute",
+              top: 20,
+              right: 20,
+              backgroundColor: isSaved ? Colors.success : "#EAE8FF",
+              padding: 10,
+              borderRadius: 12,
+            }}
+            onPress={handleSaveDeck}
+          >
+            <Text
+              style={{
+                color: isSaved ? "white" : Colors.primary,
+                fontWeight: "bold",
+              }}
+            >
+              {isSaved ? "Saved! ✓" : "Save Deck 💾"}
+            </Text>
+          </TouchableOpacity>
+
           <Text style={styles.progressText}>
             Card {currentIndex + 1} of {cards.length}
           </Text>
