@@ -2,29 +2,33 @@ import { CameraView, useCameraPermissions } from "expo-camera";
 import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import {
+  ActivityIndicator,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BouncyButton } from "../../components/BouncyButton";
 import { Colors } from "../../constants/colors";
+import { extractTextFromImage } from "../../services/ocr";
 
 export default function InputScreen() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"type" | "scan">("type");
   const [inputText, setInputText] = useState("");
   const [permission, requestPermission] = useCameraPermissions();
-  const cameraRef = useRef(null);
+  const cameraRef = useRef<CameraView>(null);
+  const [isScanning, setIsScanning] = useState(false);
 
   const characterCount = inputText.length;
   const MAX_CHARS = 3000;
 
-  // Handle camera permissions for the "Scan" tab
   if (activeTab === "scan" && !permission) {
     return <View style={styles.container} />;
   }
@@ -45,99 +49,160 @@ export default function InputScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
-      <KeyboardAvoidingView
-        style={styles.keyboardView}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
-        {/* Custom Tab Toggle */}
-        <View style={styles.tabContainer}>
-          <TouchableOpacity
-            style={[styles.tab, activeTab === "type" && styles.activeTab]}
-            onPress={() => setActiveTab("type")}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === "type" && styles.activeTabText,
-              ]}
-            >
-              ✍️ Type Notes
+      {/* Wrap the content in TouchableWithoutFeedback.
+        Clicking anywhere outside an active element will dismiss the keyboard.
+      */}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView
+          style={styles.keyboardView}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+          {/* Header */}
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>Study Studio ✨</Text>
+            <Text style={styles.headerSub}>
+              Paste or scan your notes to begin
             </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.tab, activeTab === "scan" && styles.activeTab]}
-            onPress={() => setActiveTab("scan")}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === "scan" && styles.activeTabText,
-              ]}
-            >
-              📸 Scan Photo
-            </Text>
-          </TouchableOpacity>
-        </View>
+          </View>
 
-        {/* Main Content Area */}
-        <View style={styles.contentArea}>
-          {activeTab === "type" ? (
-            <>
-              <TextInput
-                style={styles.textInput}
-                multiline
-                placeholder="Paste your lecture notes, textbook paragraphs, or rough ideas here..."
-                placeholderTextColor={Colors.text.muted}
-                value={inputText}
-                onChangeText={setInputText}
-                maxLength={MAX_CHARS}
-                textAlignVertical="top"
-              />
-              <View style={styles.footer}>
-                <Text
-                  style={[
-                    styles.charCount,
-                    characterCount > MAX_CHARS * 0.9
-                      ? { color: Colors.warning }
-                      : {},
-                  ]}
-                >
-                  {characterCount} / {MAX_CHARS}
-                </Text>
-                <BouncyButton
-                  title="Summarize ✨"
-                  onPress={() => {
-                    if (inputText.trim().length < 15) {
-                      alert(
-                        "Please enter a bit more text for Sparky to summarize!",
-                      );
-                      return;
-                    }
-                    router.push({
-                      pathname: "/summary",
-                      params: { text: inputText },
-                    });
-                  }}
-                  style={styles.actionButton}
+          {/* Custom Tab Toggle */}
+          <View style={styles.tabContainer}>
+            <TouchableOpacity
+              style={[styles.tab, activeTab === "type" && styles.activeTab]}
+              onPress={() => setActiveTab("type")}
+            >
+              <Text
+                style={[
+                  styles.tabText,
+                  activeTab === "type" && styles.activeTabText,
+                ]}
+              >
+                ✍️ Type Notes
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.tab, activeTab === "scan" && styles.activeTab]}
+              onPress={() => setActiveTab("scan")}
+            >
+              <Text
+                style={[
+                  styles.tabText,
+                  activeTab === "scan" && styles.activeTabText,
+                ]}
+              >
+                📸 Scan Photo
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Main Content Area */}
+          <View style={styles.contentArea}>
+            {activeTab === "type" ? (
+              <>
+                <TextInput
+                  style={styles.textInput}
+                  multiline
+                  placeholder="Paste your lecture notes, textbook paragraphs, or rough ideas here..."
+                  placeholderTextColor={Colors.text.muted}
+                  value={inputText}
+                  onChangeText={setInputText}
+                  maxLength={MAX_CHARS}
+                  textAlignVertical="top"
                 />
-              </View>
-            </>
-          ) : (
-            <View style={styles.cameraContainer}>
-              <CameraView style={styles.camera} facing="back" ref={cameraRef}>
-                <View style={styles.cameraOverlay}>
-                  <View style={styles.scanFrame} />
+                <View style={styles.footer}>
+                  <Text
+                    style={[
+                      styles.charCount,
+                      characterCount > MAX_CHARS * 0.9
+                        ? { color: Colors.warning }
+                        : {},
+                    ]}
+                  >
+                    {characterCount} / {MAX_CHARS}
+                  </Text>
                   <BouncyButton
-                    title="Snap & Read"
-                    onPress={() => console.log("Taking photo...")}
-                    style={styles.snapButton}
+                    title="Summarize ✨"
+                    onPress={() => {
+                      if (inputText.trim().length < 15) {
+                        alert(
+                          "Please enter a bit more text for Sparky to summarize!",
+                        );
+                        return;
+                      }
+                      // Close keyboard right before navigating
+                      Keyboard.dismiss();
+                      router.push({
+                        pathname: "/summary",
+                        params: { text: inputText },
+                      });
+                    }}
+                    style={styles.actionButton}
                   />
                 </View>
-              </CameraView>
-            </View>
-          )}
-        </View>
-      </KeyboardAvoidingView>
+              </>
+            ) : (
+              <View style={styles.cameraContainer}>
+                <CameraView style={styles.camera} facing="back" ref={cameraRef}>
+                  <View style={styles.cameraOverlay}>
+                    <View style={styles.scanFrame} />
+
+                    {isScanning ? (
+                      <View
+                        style={[
+                          styles.snapButton,
+                          {
+                            padding: 20,
+                            backgroundColor: Colors.surface,
+                            borderRadius: 20,
+                          },
+                        ]}
+                      >
+                        <ActivityIndicator
+                          size="large"
+                          color={Colors.primary}
+                        />
+                        <Text style={{ marginTop: 10, fontWeight: "bold" }}>
+                          Extracting Text...
+                        </Text>
+                      </View>
+                    ) : (
+                      <BouncyButton
+                        title="Snap & Read 📸"
+                        style={styles.snapButton}
+                        onPress={async () => {
+                          if (!cameraRef.current) return;
+                          setIsScanning(true);
+                          try {
+                            const photo =
+                              await cameraRef.current.takePictureAsync({
+                                base64: true,
+                                quality: 0.5,
+                              });
+
+                            if (photo.base64) {
+                              const extractedText = await extractTextFromImage(
+                                photo.base64,
+                              );
+                              setInputText(inputText + "\n" + extractedText);
+                              setActiveTab("type");
+                            }
+                          } catch (error) {
+                            alert(
+                              "Failed to read the image. Try holding the camera steadier!",
+                            );
+                          } finally {
+                            setIsScanning(false);
+                          }
+                        }}
+                      />
+                    )}
+                  </View>
+                </CameraView>
+              </View>
+            )}
+          </View>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 }
@@ -149,11 +214,26 @@ const styles = StyleSheet.create({
   },
   keyboardView: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 24, // Bumped padding for better margins
+    paddingTop: 16,
+    paddingBottom: 24,
+  },
+  header: {
+    marginBottom: 20,
+  },
+  headerTitle: {
+    fontSize: 32,
+    fontWeight: "900",
+    color: Colors.text.dark,
+  },
+  headerSub: {
+    fontSize: 15,
+    color: Colors.text.muted,
+    marginTop: 4,
   },
   tabContainer: {
     flexDirection: "row",
-    backgroundColor: "#EAE8FF", // Slightly darker than background
+    backgroundColor: "#EAE8FF",
     borderRadius: 20,
     padding: 4,
     marginBottom: 20,

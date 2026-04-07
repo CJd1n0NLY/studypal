@@ -21,6 +21,8 @@ interface StudyState {
   incrementStreak: () => void;
   addStudyTime: (minutes: number) => void;
   saveDeck: (deck: Deck) => void;
+  setDailyGoal: (goal: number) => void;
+  removeDeck: (id: string) => void;
 }
 
 export const useStudyStore = create<StudyState>((set) => ({
@@ -36,5 +38,10 @@ export const useStudyStore = create<StudyState>((set) => ({
   saveDeck: (deck) =>
     set((state) => ({
       savedDecks: [deck, ...state.savedDecks],
+    })),
+  setDailyGoal: (goal) => set({ dailyGoalMinutes: goal }),
+  removeDeck: (id) =>
+    set((state) => ({
+      savedDecks: state.savedDecks.filter((deck) => deck.id !== id),
     })),
 }));

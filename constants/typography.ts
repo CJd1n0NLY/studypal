@@ -1,22 +1,23 @@
 export const Typography = {
   header: {
-    fontFamily: "SpaceMono-Regular", // Using the template's default font for now
+    fontFamily: "Nunito-Bold", // Rounded and friendly
     fontSize: 28,
-    fontWeight: "bold" as const,
-  },
-  title: {
-    fontFamily: "SpaceMono-Regular",
-    fontSize: 22,
-    fontWeight: "600" as const,
   },
   body: {
-    fontFamily: "System", // Will fall back to native San Francisco / Roboto
+    fontFamily: "Poppins-Regular", // Clean and readable
     fontSize: 16,
-    fontWeight: "normal" as const,
   },
-  caption: {
-    fontFamily: "System",
-    fontSize: 12,
-    fontWeight: "500" as const,
+  code: {
+    fontFamily: "FiraCode-Regular", // For technical highlights
+    fontSize: 14,
   },
+};
+
+export const Spacing = {
+  xs: 4,
+  sm: 8,
+  md: 16,
+  lg: 24,
+  xl: 32,
+  borderRadius: 24, // Rounded corners everywhere as per spec
 };
