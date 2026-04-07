@@ -26,6 +26,9 @@ export const extractTextFromImage = async (
             {
               image: { content: base64Image },
               features: [{ type: "DOCUMENT_TEXT_DETECTION" }], // Optimized for handwriting and dense text
+              imageContext: {
+                languageHints: ["en", "es", "tl"], // English, Spanish, Tagalog (adjust as needed!)
+              }
             },
           ],
         }),

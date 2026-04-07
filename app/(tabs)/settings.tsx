@@ -1,13 +1,14 @@
+import * as Notifications from "expo-notifications";
 import React, { useState } from "react";
 import {
-  Alert,
+  Platform,
   ScrollView,
   StyleSheet,
   Switch,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BouncyButton } from "../../components/BouncyButton";
@@ -20,9 +21,19 @@ import { useUserStore } from "../../stores/useUserStore";
 
 const DAILY_GOAL_OPTIONS = [15, 30, 45, 60, 90];
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
+
 export default function SettingsScreen() {
   const { name, setName, offlineMode, toggleOfflineMode } = useUserStore();
-  const { dailyGoalMinutes, setDailyGoal } = useStudyStore();
+  const { dailyGoalMinutes, setDailyGoal, clearCache } = useStudyStore();
   const { showToast } = useToast();
 
   const [editName, setEditName] = useState(name);
@@ -47,12 +58,50 @@ export default function SettingsScreen() {
     });
   };
 
-  const handleNotificationsToggle = (val: boolean) => {
-    setNotifications(val);
-    showToast({
-      message: val ? "Daily reminders enabled! 🔔" : "Reminders turned off",
-      type: val ? "success" : "info",
-    });
+  const handleNotificationsToggle = async (val: boolean) => {
+    // 1. Prevent crash on web browsers
+    if (Platform.OS === "web") {
+      showToast({
+        message: "Push notifications are for mobile only! 📱",
+        type: "warning",
+      });
+      setNotifications(val); // Let the UI toggle anyway for testing
+      return;
+    }
+
+    if (val) {
+      // Ask the OS for permission
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status !== "granted") {
+        alert("Please enable notifications in your phone settings first!");
+        return;
+      }
+
+      // Schedule a daily reminder for 4:00 PM!
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Time to study! 🧠",
+          body: `Hey ${name}, Sparky is waiting! Let's hit your daily goal.`,
+          sound: true,
+        },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.DAILY,
+          hour: 16, // 4 PM
+          minute: 0,
+        } as Notifications.DailyTriggerInput,
+      });
+
+      setNotifications(true);
+      showToast({
+        message: "Daily reminders scheduled for 4 PM! 🔔",
+        type: "success",
+      });
+    } else {
+      // Cancel all notifications if turned off
+      await Notifications.cancelAllScheduledNotificationsAsync();
+      setNotifications(false);
+      showToast({ message: "Reminders turned off", type: "info" });
+    }
   };
 
   const handleOfflineToggle = (val: boolean) => {
@@ -76,26 +125,13 @@ export default function SettingsScreen() {
   };
 
   const handleClearCache = () => {
-    // Use native Alert for destructive confirmations only — this is intentional UX
-    Alert.alert(
-      "Clear Cache",
-      "This will free up space but won't delete your saved decks.",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Clear It",
-          style: "destructive",
-          onPress: () => {
-            playSound("next_previous").catch(() => {});
-            showToast({
-              message: "Cache cleared! Fresh start 🧹",
-              type: "success",
-              emoji: "✅",
-            });
-          },
-        },
-      ],
-    );
+    clearCache();
+    playSound("next_previous").catch(() => {});
+    showToast({
+      message: "Cache cleared! Fresh start 🧹",
+      type: "success",
+      emoji: "✨",
+    });
   };
 
   return (
@@ -222,10 +258,10 @@ export default function SettingsScreen() {
 
         {/* About */}
         <View style={styles.aboutBox}>
-          <SparkyMascot size={50} mood="happy" />
+          <Text style={{ fontSize: 40, marginBottom: 8 }}>⚡</Text>
           <Text style={styles.aboutText}>Made with ⚡ by StudyPal</Text>
           <Text style={styles.aboutSub}>
-            Powered by OpenAI · Built with Expo
+            Powered by Gemini · Built with Expo
           </Text>
         </View>
       </ScrollView>

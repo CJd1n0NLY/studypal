@@ -1,12 +1,12 @@
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import Animated, { FadeInDown, FadeOutRight } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -30,7 +30,6 @@ export default function LibraryScreen() {
   const { showToast } = useToast();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
-  const [filter, setFilter] = useState<"all" | "recent">("all");
 
   const filteredDecks = savedDecks.filter((d) =>
     d.title.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -47,7 +46,6 @@ export default function LibraryScreen() {
   };
 
   const handlePlay = (deck: (typeof savedDecks)[number]) => {
-    // Navigate to flashcards screen, passing the saved deck id so it loads directly
     router.push({ pathname: "/flashcards", params: { deckId: deck.id } });
   };
 
@@ -83,29 +81,75 @@ export default function LibraryScreen() {
         keyboardShouldPersistTaps="handled"
       >
         {savedDecks.length === 0 ? (
+          /* ── EMPTY STATE: Sparky showcase card ─────────────────────── */
           <Animated.View
             entering={FadeInDown.springify()}
-            style={styles.emptyState}
+            style={styles.emptyCard}
           >
-            <SparkyMascot size={130} mood="sad" />
+            {/* Decorative top accent bar */}
+            <View style={styles.emptyCardAccent} />
+
+            {/* Sparky with mood ring */}
+            <View style={styles.emptyMascotWrapper}>
+              {/* Large pastel ring backdrop */}
+              <View style={styles.emptyMascotRing} />
+              <SparkyMascot size={150} mood="sad" showRing={false} showShadow />
+            </View>
+
             <Text style={styles.emptyTitle}>It's quiet in here...</Text>
             <Text style={styles.emptySubtitle}>
               Generate some magic flashcard decks and save them to build your
               vault!
             </Text>
+
+            {/* CTA button */}
+            <TouchableOpacity
+              style={styles.emptyCtaButton}
+              onPress={() => router.push("/(tabs)/input")}
+              activeOpacity={0.85}
+            >
+              <Text style={styles.emptyCtaText}>✨ Create my first deck</Text>
+            </TouchableOpacity>
+
+            {/* Fun decorative dots */}
+            <View style={styles.emptyDots}>
+              {["#C3BDFF", "#FFB3CF", "#FFD98A", "#93CFEE"].map((c, i) => (
+                <View key={i} style={[styles.dot, { backgroundColor: c }]} />
+              ))}
+            </View>
           </Animated.View>
         ) : filteredDecks.length === 0 ? (
+          /* ── NO SEARCH RESULTS ──────────────────────────────────────── */
           <Animated.View
             entering={FadeInDown.springify()}
-            style={styles.emptyState}
+            style={styles.emptyCard}
           >
-            <SparkyMascot size={110} mood="thinking" />
+            <View
+              style={[styles.emptyCardAccent, { backgroundColor: "#FFD98A" }]}
+            />
+
+            <View style={styles.emptyMascotWrapper}>
+              <View
+                style={[
+                  styles.emptyMascotRing,
+                  { backgroundColor: "#FFF5D6", borderColor: "#FFD98A" },
+                ]}
+              />
+              <SparkyMascot
+                size={130}
+                mood="thinking"
+                showRing={false}
+                showShadow
+              />
+            </View>
+
             <Text style={styles.emptyTitle}>No matches found</Text>
             <Text style={styles.emptySubtitle}>
               Try a different search term.
             </Text>
           </Animated.View>
         ) : (
+          /* ── DECK LIST ──────────────────────────────────────────────── */
           filteredDecks.map((deck, idx) => (
             <Animated.View
               key={deck.id}
@@ -158,6 +202,7 @@ const styles = StyleSheet.create({
   header: { paddingHorizontal: 24, paddingTop: 20, paddingBottom: 4 },
   headerTitle: { fontSize: 32, fontWeight: "900", color: Colors.text.dark },
   headerSub: { fontSize: 14, color: Colors.text.muted, marginTop: 4 },
+
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -181,21 +226,86 @@ const styles = StyleSheet.create({
   },
   clearBtn: { fontSize: 16, color: Colors.text.muted, padding: 4 },
   content: { flexGrow: 1, paddingHorizontal: 24, paddingBottom: 40 },
-  emptyState: {
-    flex: 1,
-    justifyContent: "center",
+
+  // ── Empty state card ──────────────────────────────────────────────────
+  emptyCard: {
+    backgroundColor: Colors.surface,
+    borderRadius: 32,
+    marginTop: 16,
     alignItems: "center",
-    marginTop: 60,
-    gap: 12,
+    overflow: "hidden",
+    paddingBottom: 32,
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.08,
+    shadowRadius: 20,
+    elevation: 5,
   },
-  emptyTitle: { fontSize: 22, fontWeight: "bold", color: Colors.text.dark },
+  emptyCardAccent: {
+    width: "100%",
+    height: 6,
+    backgroundColor: Colors.primary,
+    marginBottom: 32,
+  },
+  emptyMascotWrapper: {
+    width: 190,
+    height: 190,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 8,
+  },
+  emptyMascotRing: {
+    position: "absolute",
+    width: 170,
+    height: 170,
+    borderRadius: 85,
+    backgroundColor: "#EBEBFF",
+    borderWidth: 2,
+    borderColor: "#C3BDFF",
+    borderStyle: "dashed",
+  },
+  emptyTitle: {
+    fontSize: 22,
+    fontWeight: "900",
+    color: Colors.text.dark,
+    marginBottom: 8,
+  },
   emptySubtitle: {
     fontSize: 15,
     color: Colors.text.muted,
     textAlign: "center",
-    paddingHorizontal: 20,
+    paddingHorizontal: 32,
     lineHeight: 22,
+    marginBottom: 28,
   },
+  emptyCtaButton: {
+    backgroundColor: Colors.primary,
+    paddingHorizontal: 28,
+    paddingVertical: 14,
+    borderRadius: 28,
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 5,
+    marginBottom: 20,
+  },
+  emptyCtaText: {
+    color: "white",
+    fontWeight: "800",
+    fontSize: 16,
+  },
+  emptyDots: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+  },
+
+  // ── Deck cards ────────────────────────────────────────────────────────
   deckCard: {
     flexDirection: "row",
     alignItems: "center",

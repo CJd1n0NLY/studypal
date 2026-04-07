@@ -133,13 +133,24 @@ const FloatingBlob = ({
 
 export default function HomeDashboard() {
   const router = useRouter();
-  const { streak, minutesStudiedToday, dailyGoalMinutes } = useStudyStore();
+  const {
+    streak,
+    minutesStudiedToday,
+    dailyGoalMinutes,
+    savedDecks,
+    totalSessions = 0, // Fallback to 0 if not yet added to store
+    quizAverage = 0, // Fallback to 0 if not yet added to store
+  } = useStudyStore();
   const { name } = useUserStore();
   const isOffline = useOfflineStatus();
   const progress = Math.min(
     (minutesStudiedToday / dailyGoalMinutes) * 100,
     100,
   );
+
+  const totalCards = savedDecks
+    ? savedDecks.reduce((total, deck) => total + deck.cards.length, 0)
+    : 0;
 
   const greetingHour = new Date().getHours();
   const greeting =
@@ -186,25 +197,44 @@ export default function HomeDashboard() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
+        {/* ── HEADER ─────────────────────────────────────────────────── */}
         <Animated.View
           entering={FadeInDown.delay(0).springify()}
           style={styles.header}
         >
+          {/* Left: greeting text */}
           <View style={styles.headerLeft}>
             <Text style={styles.greetingSmall}>{greeting},</Text>
             <Text style={styles.greeting}>{name || "Learner"}! 👋</Text>
             <Text style={styles.subGreeting}>Ready to study smarter?</Text>
-          </View>
-          <View style={styles.headerRight}>
-            <SparkyMascot size={80} mood="happy" />
+
+            {/* Streak badge moved under greeting so it doesn't compete with Sparky */}
             <View style={styles.streakBadge}>
               <Text style={styles.streakText}>🔥 {streak} day streak</Text>
             </View>
           </View>
+
+          {/* Right: Sparky with a proper mascot bubble */}
+          <View style={styles.sparkyBubble}>
+            {/* Decorative concentric rings */}
+            <View style={[styles.sparkyRingOuter]} />
+            <View style={[styles.sparkyRingInner]} />
+
+            <SparkyMascot
+              size={100}
+              mood="happy"
+              showRing={false} // We draw our own rings above
+              showShadow={false} // No shadow inside the bubble
+            />
+
+            {/* Floating speech bubble */}
+            <View style={styles.speechBubble}>
+              <Text style={styles.speechText}>Let's go! ✨</Text>
+            </View>
+          </View>
         </Animated.View>
 
-        {/* Daily Goal Progress */}
+        {/* ── DAILY GOAL PROGRESS ───────────────────────────────────── */}
         <Animated.View entering={FadeInDown.delay(100).springify()}>
           <View style={styles.progressCard}>
             <View style={styles.progressHeader}>
@@ -234,7 +264,7 @@ export default function HomeDashboard() {
           </View>
         </Animated.View>
 
-        {/* Quick Actions */}
+        {/* ── QUICK ACTIONS ─────────────────────────────────────────── */}
         <Animated.View
           entering={FadeInDown.delay(200).springify()}
           style={{ width: "48%", marginBottom: 16 }}
@@ -277,22 +307,25 @@ export default function HomeDashboard() {
           />
         </View>
 
-        {/* Stats Row */}
+        {/* ── STATS ROW ─────────────────────────────────────────────── */}
         <Animated.View entering={FadeInDown.delay(600).springify()}>
           <View style={styles.statsRow}>
             <View style={styles.statCard}>
               <Text style={styles.statEmoji}>📚</Text>
-              <Text style={styles.statValue}>12</Text>
+              {/* Dynamic Sessions */}
+              <Text style={styles.statValue}>{totalSessions}</Text>
               <Text style={styles.statLabel}>Sessions</Text>
             </View>
             <View style={[styles.statCard, styles.statCardMid]}>
               <Text style={styles.statEmoji}>🃏</Text>
-              <Text style={styles.statValue}>48</Text>
+              {/* Dynamic Cards Count */}
+              <Text style={styles.statValue}>{totalCards}</Text>
               <Text style={styles.statLabel}>Cards Learned</Text>
             </View>
             <View style={styles.statCard}>
               <Text style={styles.statEmoji}>🏆</Text>
-              <Text style={styles.statValue}>87%</Text>
+              {/* Dynamic Quiz Avg */}
+              <Text style={styles.statValue}>{quizAverage}%</Text>
               <Text style={styles.statLabel}>Quiz Avg.</Text>
             </View>
           </View>
@@ -317,24 +350,80 @@ const styles = StyleSheet.create({
   },
   offlineText: { color: "white", fontWeight: "bold", fontSize: 13 },
   scrollContent: { padding: 24, paddingBottom: 40 },
+
+  // ── Header ──────────────────────────────────────────────────────────
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
     marginBottom: 28,
   },
-  headerLeft: { flex: 1 },
-  headerRight: { alignItems: "center", gap: 8 },
+  headerLeft: { flex: 1, paddingTop: 4 },
   greetingSmall: { fontSize: 14, color: Colors.text.muted, fontWeight: "500" },
   greeting: { fontSize: 28, fontWeight: "900", color: Colors.text.dark },
-  subGreeting: { fontSize: 15, color: Colors.text.muted, marginTop: 4 },
+  subGreeting: {
+    fontSize: 15,
+    color: Colors.text.muted,
+    marginTop: 4,
+    marginBottom: 12,
+  },
   streakBadge: {
+    alignSelf: "flex-start",
     backgroundColor: "#FFE5EC",
     paddingHorizontal: 12,
     paddingVertical: 5,
     borderRadius: 20,
   },
   streakText: { fontSize: 12, fontWeight: "bold", color: Colors.secondary },
+
+  // ── Sparky bubble ────────────────────────────────────────────────────
+  sparkyBubble: {
+    width: 128,
+    height: 140,
+    alignItems: "center",
+    justifyContent: "center",
+    marginLeft: 8,
+    // Push Sparky up a little so her shadow/feet sit on a natural baseline
+    marginTop: -8,
+  },
+  sparkyRingOuter: {
+    position: "absolute",
+    width: 116,
+    height: 116,
+    borderRadius: 58,
+    backgroundColor: "#EAE8FF",
+    top: 4,
+  },
+  sparkyRingInner: {
+    position: "absolute",
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: "#F5F4FF",
+    borderWidth: 2,
+    borderColor: "#D0CBFF",
+    top: 14,
+  },
+  // Tiny speech bubble that pops above the ring
+  speechBubble: {
+    position: "absolute",
+    top: -8,
+    right: -4,
+    backgroundColor: Colors.primary,
+    paddingHorizontal: 9,
+    paddingVertical: 5,
+    borderRadius: 14,
+    borderBottomRightRadius: 2,
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 4,
+    zIndex: 20,
+  },
+  speechText: { color: "white", fontSize: 11, fontWeight: "700" },
+
+  // ── Progress card ─────────────────────────────────────────────────────
   progressCard: {
     backgroundColor: Colors.surface,
     padding: 22,
@@ -374,6 +463,8 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: "#D0D0D0",
   },
+
+  // ── Section title & grid ──────────────────────────────────────────────
   sectionTitle: {
     fontSize: 18,
     fontWeight: "800",
@@ -405,6 +496,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 8,
     elevation: 3,
+    marginBottom: 16,
   },
   cardIcon: { fontSize: 34, marginBottom: 10 },
   cardText: {
@@ -414,6 +506,8 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   cardDesc: { fontSize: 12, color: Colors.text.muted, textAlign: "center" },
+
+  // ── Stats ─────────────────────────────────────────────────────────────
   statsRow: {
     flexDirection: "row",
     gap: 8,

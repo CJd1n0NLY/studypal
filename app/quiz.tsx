@@ -23,6 +23,7 @@ import { useToast } from "../components/ToastNotification";
 import { Colors } from "../constants/colors";
 import { generateQuiz } from "../services/openai";
 import { playSound } from "../services/soundManager";
+import { useStudyStore } from "../stores/useStudyStore";
 
 interface Question {
   id: number;
@@ -133,6 +134,8 @@ export default function QuizScreen() {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isFinished, setIsFinished] = useState(false);
   const [results, setResults] = useState<boolean[]>([]);
+  const { updateQuizAverage, incrementSessions, addStudyTime } =
+    useStudyStore();
 
   const handleGenerate = async () => {
     if (topic.trim().length < 3) {
@@ -202,6 +205,11 @@ export default function QuizScreen() {
       setCurrentIndex((i) => i + 1);
       setSelectedAnswer(null);
     } else {
+      const percentage = Math.round((score / questions.length) * 100);
+      updateQuizAverage(percentage);
+      incrementSessions();
+      addStudyTime(5);
+
       setIsFinished(true);
 
       showToast({

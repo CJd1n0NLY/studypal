@@ -28,7 +28,8 @@ interface CardData {
 export default function FlashcardsScreen() {
   const { showToast } = useToast();
   const { deckId } = useLocalSearchParams<{ deckId?: string }>();
-  const { saveDeck, savedDecks } = useStudyStore();
+  const { saveDeck, savedDecks, incrementSessions, addStudyTime } =
+    useStudyStore();
   const [topic, setTopic] = useState("");
   const [loading, setLoading] = useState(false);
   const [cards, setCards] = useState<CardData[]>([]);
@@ -94,7 +95,9 @@ export default function FlashcardsScreen() {
   ).current;
 
   const finishDeck = () => {
-    // Show finished state immediately, then play sound — don't block on sound
+    incrementSessions();
+    addStudyTime(5);
+
     setIsFinished(true);
     unloadAllSounds()
       .then(() => playSound("celebrate"))

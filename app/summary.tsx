@@ -19,7 +19,7 @@ import { SparkyMascot } from "../components/SparkyMascot";
 import { useToast } from "../components/ToastNotification";
 import { Colors } from "../constants/colors";
 import { generateSummary } from "../services/openai";
-import { playSound, unloadAllSounds } from "../services/soundManager";
+import { playSound } from "../services/soundManager";
 
 interface SummaryData {
   tldr: string;

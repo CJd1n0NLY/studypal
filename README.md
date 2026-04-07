@@ -180,3 +180,396 @@ studypal
    └─ useOfflineStatus.tsx
 
 ```
+```
+studypal
+├─ components
+│  ├─ SparkyMascot.tsx
+│  ├─ FlipCard.tsx
+│  ├─ BouncyButton.tsx
+│  ├─ SoundWave.tsx
+│  ├─ ConfettiExplosion.tsx
+│  └─ ToastNotification.tsx
+├─ tsconfig.json
+├─ assets
+│  ├─ images
+│  │  ├─ adaptive-icon.png
+│  │  ├─ favicon.png
+│  │  ├─ icon.png
+│  │  └─ splash-icon.png
+│  ├─ fonts
+│  │  └─ SpaceMono-Regular.ttf
+│  └─ sounds
+│     ├─ next_previous(card)swipe.mp3
+│     ├─ thinking.mp3
+│     ├─ flipcard.mp3
+│     ├─ celebrate.mp3
+│     ├─ wrong.mp3
+│     └─ correct.mp3
+├─ constants
+│  ├─ typography.ts
+│  ├─ prompts.ts
+│  └─ colors.ts
+├─ app
+│  ├─ _layout.tsx
+│  ├─ (tabs)
+│  │  ├─ _layout.tsx
+│  │  ├─ index.tsx
+│  │  ├─ input.tsx
+│  │  ├─ library.tsx
+│  │  └─ settings.tsx
+│  ├─ +html.tsx
+│  ├─ +not-found.tsx
+│  ├─ summary.tsx
+│  ├─ flashcards.tsx
+│  ├─ quiz.tsx
+│  └─ voice.tsx
+├─ app.json
+├─ package-lock.json
+├─ README.md
+├─ stores
+│  ├─ useStudyStore.ts
+│  └─ useUserStore.ts
+├─ services
+│  ├─ openai.ts
+│  ├─ ocr.ts
+│  └─ soundManager.ts
+├─ package.json
+└─ hooks
+   └─ useOfflineStatus.tsx
+
+```
+```
+studypal
+├─ components
+│  ├─ SparkyMascot.tsx
+│  ├─ FlipCard.tsx
+│  ├─ BouncyButton.tsx
+│  ├─ SoundWave.tsx
+│  ├─ ConfettiExplosion.tsx
+│  ├─ ToastNotification.tsx
+│  └─ ThreeTest.tsx
+├─ tsconfig.json
+├─ assets
+│  ├─ images
+│  │  ├─ adaptive-icon.png
+│  │  ├─ favicon.png
+│  │  ├─ icon.png
+│  │  └─ splash-icon.png
+│  ├─ fonts
+│  │  └─ SpaceMono-Regular.ttf
+│  ├─ sounds
+│  │  ├─ next_previous(card)swipe.mp3
+│  │  ├─ thinking.mp3
+│  │  ├─ flipcard.mp3
+│  │  ├─ celebrate.mp3
+│  │  ├─ wrong.mp3
+│  │  └─ correct.mp3
+│  └─ models
+│     └─ sparky.glb
+├─ constants
+│  ├─ typography.ts
+│  ├─ prompts.ts
+│  └─ colors.ts
+├─ app
+│  ├─ _layout.tsx
+│  ├─ (tabs)
+│  │  ├─ _layout.tsx
+│  │  ├─ index.tsx
+│  │  ├─ input.tsx
+│  │  ├─ library.tsx
+│  │  └─ settings.tsx
+│  ├─ +html.tsx
+│  ├─ +not-found.tsx
+│  ├─ summary.tsx
+│  ├─ flashcards.tsx
+│  ├─ quiz.tsx
+│  └─ voice.tsx
+├─ package-lock.json
+├─ README.md
+├─ stores
+│  ├─ useStudyStore.ts
+│  └─ useUserStore.ts
+├─ services
+│  ├─ openai.ts
+│  ├─ ocr.ts
+│  └─ soundManager.ts
+├─ hooks
+│  └─ useOfflineStatus.tsx
+├─ package.json
+├─ app.json
+└─ metro.config.js
+
+```
+```
+studypal
+├─ components
+│  ├─ SparkyMascot.tsx
+│  ├─ FlipCard.tsx
+│  ├─ BouncyButton.tsx
+│  ├─ SoundWave.tsx
+│  ├─ ConfettiExplosion.tsx
+│  ├─ ToastNotification.tsx
+│  └─ ThreeTest.tsx
+├─ tsconfig.json
+├─ assets
+│  ├─ images
+│  │  ├─ adaptive-icon.png
+│  │  ├─ favicon.png
+│  │  ├─ icon.png
+│  │  └─ splash-icon.png
+│  ├─ fonts
+│  │  └─ SpaceMono-Regular.ttf
+│  ├─ sounds
+│  │  ├─ next_previous(card)swipe.mp3
+│  │  ├─ thinking.mp3
+│  │  ├─ flipcard.mp3
+│  │  ├─ celebrate.mp3
+│  │  ├─ wrong.mp3
+│  │  └─ correct.mp3
+│  └─ models
+│     ├─ sparky.glb
+│     └─ sparky.gltf
+├─ constants
+│  ├─ typography.ts
+│  ├─ prompts.ts
+│  └─ colors.ts
+├─ app
+│  ├─ _layout.tsx
+│  ├─ (tabs)
+│  │  ├─ _layout.tsx
+│  │  ├─ index.tsx
+│  │  ├─ input.tsx
+│  │  ├─ library.tsx
+│  │  └─ settings.tsx
+│  ├─ +html.tsx
+│  ├─ +not-found.tsx
+│  ├─ summary.tsx
+│  ├─ flashcards.tsx
+│  ├─ quiz.tsx
+│  └─ voice.tsx
+├─ package-lock.json
+├─ README.md
+├─ stores
+│  ├─ useStudyStore.ts
+│  └─ useUserStore.ts
+├─ services
+│  ├─ openai.ts
+│  ├─ ocr.ts
+│  └─ soundManager.ts
+├─ hooks
+│  └─ useOfflineStatus.tsx
+├─ package.json
+├─ app.json
+├─ metro.config.js
+└─ public
+   └─ sparky.glb
+
+```
+```
+studypal
+├─ components
+│  ├─ SparkyMascot.tsx
+│  ├─ FlipCard.tsx
+│  ├─ BouncyButton.tsx
+│  ├─ SoundWave.tsx
+│  ├─ ConfettiExplosion.tsx
+│  ├─ ToastNotification.tsx
+│  └─ ThreeTest.tsx
+├─ tsconfig.json
+├─ assets
+│  ├─ images
+│  │  ├─ adaptive-icon.png
+│  │  ├─ favicon.png
+│  │  ├─ icon.png
+│  │  └─ splash-icon.png
+│  ├─ fonts
+│  │  └─ SpaceMono-Regular.ttf
+│  ├─ sounds
+│  │  ├─ next_previous(card)swipe.mp3
+│  │  ├─ thinking.mp3
+│  │  ├─ flipcard.mp3
+│  │  ├─ celebrate.mp3
+│  │  ├─ wrong.mp3
+│  │  └─ correct.mp3
+│  └─ models
+│     ├─ sparky.glb
+│     ├─ sparky.gltf
+│     ├─ gltf_embedded_0.png
+│     ├─ gltf_embedded_1.png
+│     ├─ gltf_embedded_2.png
+│     ├─ gltf_embedded_3.png
+│     ├─ gltf_embedded_4.png
+│     ├─ gltf_embedded_5.png
+│     ├─ gltf_embedded_6.png
+│     ├─ gltf_embedded_7.png
+│     ├─ gltf_embedded_8.png
+│     ├─ gltf_embedded_9.png
+│     ├─ gltf_embedded_10.png
+│     ├─ gltf_embedded_11.png
+│     ├─ gltf_embedded_12.png
+│     ├─ gltf_embedded_13.png
+│     └─ gltf_embedded_14.png
+├─ constants
+│  ├─ typography.ts
+│  ├─ prompts.ts
+│  └─ colors.ts
+├─ app
+│  ├─ _layout.tsx
+│  ├─ (tabs)
+│  │  ├─ _layout.tsx
+│  │  ├─ index.tsx
+│  │  ├─ input.tsx
+│  │  ├─ library.tsx
+│  │  └─ settings.tsx
+│  ├─ +html.tsx
+│  ├─ +not-found.tsx
+│  ├─ summary.tsx
+│  ├─ flashcards.tsx
+│  ├─ quiz.tsx
+│  └─ voice.tsx
+├─ package-lock.json
+├─ README.md
+├─ stores
+│  ├─ useStudyStore.ts
+│  └─ useUserStore.ts
+├─ services
+│  ├─ openai.ts
+│  ├─ ocr.ts
+│  └─ soundManager.ts
+├─ hooks
+│  └─ useOfflineStatus.tsx
+├─ package.json
+├─ app.json
+├─ metro.config.js
+└─ public
+   └─ sparky.glb
+
+```
+```
+studypal
+├─ components
+│  ├─ SparkyMascot.tsx
+│  ├─ FlipCard.tsx
+│  ├─ BouncyButton.tsx
+│  ├─ SoundWave.tsx
+│  ├─ ConfettiExplosion.tsx
+│  ├─ ToastNotification.tsx
+│  └─ ThreeTest.tsx
+├─ tsconfig.json
+├─ assets
+│  ├─ images
+│  │  ├─ adaptive-icon.png
+│  │  ├─ favicon.png
+│  │  ├─ icon.png
+│  │  └─ splash-icon.png
+│  ├─ fonts
+│  │  └─ SpaceMono-Regular.ttf
+│  ├─ sounds
+│  │  ├─ next_previous(card)swipe.mp3
+│  │  ├─ thinking.mp3
+│  │  ├─ flipcard.mp3
+│  │  ├─ celebrate.mp3
+│  │  ├─ wrong.mp3
+│  │  └─ correct.mp3
+│  └─ models
+│     └─ sparky.glb
+├─ constants
+│  ├─ typography.ts
+│  ├─ prompts.ts
+│  └─ colors.ts
+├─ app
+│  ├─ _layout.tsx
+│  ├─ (tabs)
+│  │  ├─ _layout.tsx
+│  │  ├─ index.tsx
+│  │  ├─ input.tsx
+│  │  ├─ library.tsx
+│  │  └─ settings.tsx
+│  ├─ +html.tsx
+│  ├─ +not-found.tsx
+│  ├─ summary.tsx
+│  ├─ flashcards.tsx
+│  ├─ quiz.tsx
+│  └─ voice.tsx
+├─ package-lock.json
+├─ README.md
+├─ stores
+│  ├─ useStudyStore.ts
+│  └─ useUserStore.ts
+├─ services
+│  ├─ openai.ts
+│  ├─ ocr.ts
+│  └─ soundManager.ts
+├─ hooks
+│  └─ useOfflineStatus.tsx
+├─ package.json
+├─ app.json
+├─ metro.config.js
+└─ public
+   └─ sparky.glb
+
+```
+```
+studypal
+├─ components
+│  ├─ SparkyMascot.tsx
+│  ├─ FlipCard.tsx
+│  ├─ BouncyButton.tsx
+│  ├─ SoundWave.tsx
+│  ├─ ConfettiExplosion.tsx
+│  ├─ ToastNotification.tsx
+│  └─ ThreeTest.tsx
+├─ tsconfig.json
+├─ assets
+│  ├─ images
+│  │  ├─ adaptive-icon.png
+│  │  ├─ favicon.png
+│  │  ├─ icon.png
+│  │  └─ splash-icon.png
+│  ├─ fonts
+│  │  └─ SpaceMono-Regular.ttf
+│  ├─ sounds
+│  │  ├─ next_previous(card)swipe.mp3
+│  │  ├─ thinking.mp3
+│  │  ├─ flipcard.mp3
+│  │  ├─ celebrate.mp3
+│  │  ├─ wrong.mp3
+│  │  └─ correct.mp3
+│  └─ models
+│     └─ sparky.glb
+├─ constants
+│  ├─ typography.ts
+│  ├─ prompts.ts
+│  └─ colors.ts
+├─ app
+│  ├─ _layout.tsx
+│  ├─ (tabs)
+│  │  ├─ _layout.tsx
+│  │  ├─ index.tsx
+│  │  ├─ input.tsx
+│  │  ├─ library.tsx
+│  │  └─ settings.tsx
+│  ├─ +html.tsx
+│  ├─ +not-found.tsx
+│  ├─ summary.tsx
+│  ├─ flashcards.tsx
+│  ├─ quiz.tsx
+│  └─ voice.tsx
+├─ package-lock.json
+├─ README.md
+├─ stores
+│  ├─ useStudyStore.ts
+│  └─ useUserStore.ts
+├─ services
+│  ├─ openai.ts
+│  ├─ ocr.ts
+│  └─ soundManager.ts
+├─ hooks
+│  └─ useOfflineStatus.tsx
+├─ app.json
+├─ metro.config.js
+├─ public
+│  └─ sparky.glb
+└─ package.json
+
+```

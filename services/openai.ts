@@ -1,3 +1,4 @@
+import { useUserStore } from "@/stores/useUserStore";
 import axios from "axios";
 import { PROMPTS } from "../constants/prompts";
 
@@ -5,7 +6,15 @@ const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
 const baseUrl =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
 
+const checkOfflineMode = () => {
+  const isOffline = useUserStore.getState().offlineMode;
+  if (isOffline) {
+    throw new Error("OFFLINE_MODE_ACTIVE");
+  }
+};
+
 export const generateSummary = async (text: string) => {
+  checkOfflineMode();
   try {
     const response = await axios.post(`${baseUrl}?key=${GEMINI_API_KEY}`, {
       systemInstruction: {
@@ -28,6 +37,7 @@ export const generateSummary = async (text: string) => {
 };
 
 export const generateFlashcards = async (topic: string) => {
+  checkOfflineMode();
   try {
     const flashcardPrompt = `
       Create exactly 5 study flashcards about the following topic: "${topic}".
@@ -55,6 +65,7 @@ export const generateFlashcards = async (topic: string) => {
 };
 
 export const generateQuiz = async (topic: string) => {
+  checkOfflineMode();
   try {
     const quizPrompt = `
       Create a 5-question multiple choice quiz about: "${topic}".
@@ -85,6 +96,7 @@ export const generateQuiz = async (topic: string) => {
 };
 
 export const generateVoiceExplanation = async (topic: string) => {
+  checkOfflineMode();
   try {
     const voicePrompt = `
       Explain the following topic as if you're a friendly, enthusiastic tutor talking to a 16-year-old student. 
