@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import { Colors } from "../../constants/colors";
 // 1. Import Ionicons
 import { Ionicons } from "@expo/vector-icons";
@@ -35,8 +35,8 @@ export default function TabLayout() {
           shadowOffset: { width: 0, height: -4 },
           shadowOpacity: 0.1,
           shadowRadius: 12,
-          height: 80,
-          paddingBottom: 20,
+          height: Platform.OS === "android" ? 75 : 85,
+          paddingBottom: Platform.OS === "android" ? 10 : 25,
           paddingTop: 10,
         },
         tabBarLabelStyle: {
