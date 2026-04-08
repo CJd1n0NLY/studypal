@@ -17,6 +17,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { BouncyButton } from "../../components/BouncyButton";
 import { Colors } from "../../constants/colors";
 import { extractTextFromImage } from "../../services/ocr";
+// 1. Import Ionicons
+import { Ionicons } from "@expo/vector-icons";
 
 export default function InputScreen() {
   const router = useRouter();
@@ -37,7 +39,14 @@ export default function InputScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.permissionContainer}>
-          <Text style={styles.title}>We need your camera 📸</Text>
+          {/* Added a nice big vector icon for the permission screen */}
+          <Ionicons
+            name="camera"
+            size={56}
+            color={Colors.primary}
+            style={{ marginBottom: 16 }}
+          />
+          <Text style={styles.title}>We need your camera</Text>
           <Text style={styles.subtitle}>
             To scan your study notes, please grant camera access.
           </Text>
@@ -49,9 +58,6 @@ export default function InputScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
-      {/* Wrap the content in TouchableWithoutFeedback.
-        Clicking anywhere outside an active element will dismiss the keyboard.
-      */}
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAvoidingView
           style={styles.keyboardView}
@@ -59,7 +65,11 @@ export default function InputScreen() {
         >
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.headerTitle}>Study Studio ✨</Text>
+            <View style={styles.headerTitleRow}>
+              <Text style={styles.headerTitle}>Study Studio</Text>
+              {/* Replaced Sparkles Emoji */}
+              <Ionicons name="sparkles" size={28} color={Colors.warning} />
+            </View>
             <Text style={styles.headerSub}>
               Paste or scan your notes to begin
             </Text>
@@ -71,27 +81,46 @@ export default function InputScreen() {
               style={[styles.tab, activeTab === "type" && styles.activeTab]}
               onPress={() => setActiveTab("type")}
             >
-              <Text
-                style={[
-                  styles.tabText,
-                  activeTab === "type" && styles.activeTabText,
-                ]}
-              >
-                ✍️ Type Notes
-              </Text>
+              {/* Wrapped in a row to hold the icon and text together */}
+              <View style={styles.tabContent}>
+                <Ionicons
+                  name="pencil"
+                  size={18}
+                  color={
+                    activeTab === "type" ? Colors.primary : Colors.text.muted
+                  }
+                />
+                <Text
+                  style={[
+                    styles.tabText,
+                    activeTab === "type" && styles.activeTabText,
+                  ]}
+                >
+                  Type Notes
+                </Text>
+              </View>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.tab, activeTab === "scan" && styles.activeTab]}
               onPress={() => setActiveTab("scan")}
             >
-              <Text
-                style={[
-                  styles.tabText,
-                  activeTab === "scan" && styles.activeTabText,
-                ]}
-              >
-                📸 Scan Photo
-              </Text>
+              <View style={styles.tabContent}>
+                <Ionicons
+                  name="camera"
+                  size={18}
+                  color={
+                    activeTab === "scan" ? Colors.primary : Colors.text.muted
+                  }
+                />
+                <Text
+                  style={[
+                    styles.tabText,
+                    activeTab === "scan" && styles.activeTabText,
+                  ]}
+                >
+                  Scan Photo
+                </Text>
+              </View>
             </TouchableOpacity>
           </View>
 
@@ -120,8 +149,9 @@ export default function InputScreen() {
                   >
                     {characterCount} / {MAX_CHARS}
                   </Text>
+                  {/* Cleaned up emoji from the button title */}
                   <BouncyButton
-                    title="Summarize ✨"
+                    title="Summarize"
                     onPress={() => {
                       if (inputText.trim().length < 15) {
                         alert(
@@ -129,7 +159,6 @@ export default function InputScreen() {
                         );
                         return;
                       }
-                      // Close keyboard right before navigating
                       Keyboard.dismiss();
                       router.push({
                         pathname: "/summary",
@@ -167,7 +196,7 @@ export default function InputScreen() {
                       </View>
                     ) : (
                       <BouncyButton
-                        title="Snap & Read 📸"
+                        title="Snap & Read"
                         style={styles.snapButton}
                         onPress={async () => {
                           if (!cameraRef.current) return;
@@ -214,12 +243,17 @@ const styles = StyleSheet.create({
   },
   keyboardView: {
     flex: 1,
-    paddingHorizontal: 24, // Bumped padding for better margins
+    paddingHorizontal: 24,
     paddingTop: 16,
     paddingBottom: 24,
   },
   header: {
     marginBottom: 20,
+  },
+  headerTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
   headerTitle: {
     fontSize: 32,
@@ -243,6 +277,11 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     alignItems: "center",
     borderRadius: 16,
+  },
+  tabContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
   activeTab: {
     backgroundColor: Colors.surface,

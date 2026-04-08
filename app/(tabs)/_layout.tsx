@@ -1,11 +1,23 @@
 import { Tabs } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { Colors } from "../../constants/colors";
+// 1. Import Ionicons
+import { Ionicons } from "@expo/vector-icons";
 
-// A simple helper to render playful custom icons
-const TabIcon = ({ name, focused }: { name: string; focused: boolean }) => (
+// 2. Update the helper to accept Ionicons names
+const TabIcon = ({
+  name,
+  focused,
+}: {
+  name: keyof typeof Ionicons.glyphMap;
+  focused: boolean;
+}) => (
   <View style={[styles.iconContainer, focused && styles.iconFocused]}>
-    <Text style={{ fontSize: 24, opacity: focused ? 1 : 0.5 }}>{name}</Text>
+    <Ionicons
+      name={name}
+      size={24}
+      color={focused ? Colors.primary : Colors.text.muted}
+    />
   </View>
 );
 
@@ -28,46 +40,65 @@ export default function TabLayout() {
           paddingTop: 10,
         },
         tabBarLabelStyle: {
-          fontFamily: "System", // Match your typography body font
+          fontFamily: "System",
           fontWeight: "600",
           fontSize: 12,
         },
-        headerShown: false, // Hide headers to make it look cleaner
+        headerShown: false,
       }}
     >
+      {/* 3. Swap emojis for real icon names */}
       <Tabs.Screen
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ focused }) => <TabIcon name="🏠" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon
+              name={focused ? "home" : "home-outline"}
+              focused={focused}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="input"
         options={{
           title: "Study",
-          tabBarIcon: ({ focused }) => <TabIcon name="✨" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon
+              name={focused ? "bulb" : "bulb-outline"}
+              focused={focused}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="library"
         options={{
           title: "Library",
-          tabBarIcon: ({ focused }) => <TabIcon name="📚" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon
+              name={focused ? "library" : "library-outline"}
+              focused={focused}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
           title: "Settings",
-          tabBarIcon: ({ focused }) => <TabIcon name="⚙️" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon
+              name={focused ? "settings" : "settings-outline"}
+              focused={focused}
+            />
+          ),
         }}
       />
     </Tabs>
   );
 }
-
-import { Text } from "react-native";
 
 const styles = StyleSheet.create({
   iconContainer: {
@@ -77,6 +108,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   iconFocused: {
-    backgroundColor: "#F0EFFF", // Very light primary color
+    backgroundColor: "#F0EFFF",
   },
 });

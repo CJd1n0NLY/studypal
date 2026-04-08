@@ -8,7 +8,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BouncyButton } from "../../components/BouncyButton";
@@ -18,6 +18,8 @@ import { Colors } from "../../constants/colors";
 import { playSound } from "../../services/soundManager";
 import { useStudyStore } from "../../stores/useStudyStore";
 import { useUserStore } from "../../stores/useUserStore";
+// 1. Import Ionicons
+import { Ionicons } from "@expo/vector-icons";
 
 const DAILY_GOAL_OPTIONS = [15, 30, 45, 60, 90];
 
@@ -42,42 +44,29 @@ export default function SettingsScreen() {
 
   const handleSaveProfile = async () => {
     if (editName.trim().length === 0) {
-      showToast({
-        message: "Name can't be empty!",
-        type: "warning",
-        emoji: "✏️",
-      });
+      showToast({ message: "Name can't be empty!", type: "warning" });
       return;
     }
     playSound("correct").catch(() => {});
     setName(editName.trim());
-    showToast({
-      message: "Profile saved! Looking good ✨",
-      type: "success",
-      emoji: "👤",
-    });
+    showToast({ message: "Profile saved! Looking good ✨", type: "success" });
   };
 
   const handleNotificationsToggle = async (val: boolean) => {
-    // 1. Prevent crash on web browsers
     if (Platform.OS === "web") {
       showToast({
         message: "Push notifications are for mobile only! 📱",
         type: "warning",
       });
-      setNotifications(val); // Let the UI toggle anyway for testing
+      setNotifications(val);
       return;
     }
-
     if (val) {
-      // Ask the OS for permission
       const { status } = await Notifications.requestPermissionsAsync();
       if (status !== "granted") {
         alert("Please enable notifications in your phone settings first!");
         return;
       }
-
-      // Schedule a daily reminder for 4:00 PM!
       await Notifications.scheduleNotificationAsync({
         content: {
           title: "Time to study! 🧠",
@@ -86,18 +75,16 @@ export default function SettingsScreen() {
         },
         trigger: {
           type: Notifications.SchedulableTriggerInputTypes.DAILY,
-          hour: 16, // 4 PM
+          hour: 16,
           minute: 0,
         } as Notifications.DailyTriggerInput,
       });
-
       setNotifications(true);
       showToast({
         message: "Daily reminders scheduled for 4 PM! 🔔",
         type: "success",
       });
     } else {
-      // Cancel all notifications if turned off
       await Notifications.cancelAllScheduledNotificationsAsync();
       setNotifications(false);
       showToast({ message: "Reminders turned off", type: "info" });
@@ -118,20 +105,15 @@ export default function SettingsScreen() {
     setDailyGoal?.(mins);
     setShowGoalPicker(false);
     showToast({
-      message: `Daily goal set to ${mins} minutes!`,
+      message: `Daily goal set to ${mins} minutes! 🎯`,
       type: "success",
-      emoji: "🎯",
     });
   };
 
   const handleClearCache = () => {
     clearCache();
     playSound("next_previous").catch(() => {});
-    showToast({
-      message: "Cache cleared! Fresh start 🧹",
-      type: "success",
-      emoji: "✨",
-    });
+    showToast({ message: "Cache cleared! Fresh start ✨", type: "success" });
   };
 
   return (
@@ -143,16 +125,17 @@ export default function SettingsScreen() {
         {/* Header */}
         <View style={styles.profileHeader}>
           <View style={styles.avatarCircle}>
-            <SparkyMascot size={72} mood="happy" />
+            <SparkyMascot size={72} mood="happy" showShadow={false} />
           </View>
           <Text style={styles.headerTitle}>Settings</Text>
           <Text style={styles.headerSub}>Customize your experience</Text>
         </View>
 
-        {/* Profile */}
+        {/* Profile Card */}
         <View style={styles.card}>
           <View style={styles.sectionTitleRow}>
-            <Text style={styles.sectionIcon}>👤</Text>
+            {/* Replaced person emoji */}
+            <Ionicons name="person" size={20} color={Colors.primary} />
             <Text style={styles.sectionTitle}>Profile</Text>
           </View>
 
@@ -171,7 +154,12 @@ export default function SettingsScreen() {
             onPress={() => setShowGoalPicker(!showGoalPicker)}
           >
             <Text style={styles.goalValue}>{dailyGoalMinutes} minutes</Text>
-            <Text style={styles.goalArrow}>{showGoalPicker ? "▾" : "▸"}</Text>
+            {/* Replaced standard text arrows with Ionicons */}
+            <Ionicons
+              name={showGoalPicker ? "chevron-down" : "chevron-forward"}
+              size={20}
+              color={Colors.text.muted}
+            />
           </TouchableOpacity>
 
           {showGoalPicker && (
@@ -205,10 +193,11 @@ export default function SettingsScreen() {
           />
         </View>
 
-        {/* Preferences */}
+        {/* Preferences Card */}
         <View style={styles.card}>
           <View style={styles.sectionTitleRow}>
-            <Text style={styles.sectionIcon}>⚙️</Text>
+            {/* Replaced gear emoji */}
+            <Ionicons name="settings" size={20} color={Colors.primary} />
             <Text style={styles.sectionTitle}>Preferences</Text>
           </View>
 
@@ -227,10 +216,11 @@ export default function SettingsScreen() {
           />
         </View>
 
-        {/* System */}
+        {/* System Card */}
         <View style={styles.card}>
           <View style={styles.sectionTitleRow}>
-            <Text style={styles.sectionIcon}>📱</Text>
+            {/* Replaced phone emoji */}
+            <Ionicons name="hardware-chip" size={22} color={Colors.primary} />
             <Text style={styles.sectionTitle}>System</Text>
           </View>
 
@@ -248,7 +238,7 @@ export default function SettingsScreen() {
           </View>
 
           <BouncyButton
-            title="🧹 Clear App Cache"
+            title="Clear App Cache"
             type="outline"
             onPress={handleClearCache}
             style={{ marginTop: 20, borderColor: Colors.error }}
@@ -256,10 +246,11 @@ export default function SettingsScreen() {
           />
         </View>
 
-        {/* About */}
+        {/* About Box */}
         <View style={styles.aboutBox}>
-          <Text style={{ fontSize: 40, marginBottom: 8 }}>⚡</Text>
-          <Text style={styles.aboutText}>Made with ⚡ by StudyPal</Text>
+          {/* Replaced giant emoji with vector icon */}
+          <Ionicons name="flash" size={48} color={Colors.warning} />
+          <Text style={styles.aboutText}>Made with passion by StudyPal</Text>
           <Text style={styles.aboutSub}>
             Powered by Gemini · Built with Expo
           </Text>
@@ -326,7 +317,6 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 18,
   },
-  sectionIcon: { fontSize: 20 },
   sectionTitle: { fontSize: 18, fontWeight: "bold", color: Colors.text.dark },
   label: {
     fontSize: 13,
@@ -355,7 +345,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   goalValue: { fontSize: 16, fontWeight: "600", color: Colors.primary },
-  goalArrow: { fontSize: 16, color: Colors.text.muted },
   goalOptions: {
     flexDirection: "row",
     gap: 8,
@@ -409,12 +398,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.success,
   },
   statusText: { fontSize: 13, fontWeight: "700", color: Colors.success },
-  aboutBox: {
-    alignItems: "center",
-    gap: 6,
-    padding: 20,
-    marginTop: 4,
-  },
+  aboutBox: { alignItems: "center", gap: 6, padding: 20, marginTop: 4 },
   aboutText: { fontSize: 14, fontWeight: "600", color: Colors.text.muted },
   aboutSub: { fontSize: 12, color: Colors.text.muted, opacity: 0.7 },
 });

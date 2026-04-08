@@ -15,6 +15,8 @@ import { useToast } from "../../components/ToastNotification";
 import { Colors } from "../../constants/colors";
 import { playSound } from "../../services/soundManager";
 import { useStudyStore } from "../../stores/useStudyStore";
+// 1. Import Ionicons
+import { Ionicons } from "@expo/vector-icons";
 
 const SUBJECT_COLORS = [
   Colors.primary,
@@ -52,7 +54,10 @@ export default function LibraryScreen() {
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Your Library 📚</Text>
+        <Text style={styles.headerTitle}>
+          Your Library{" "}
+          <Ionicons name="library" size={28} color={Colors.text.dark} />
+        </Text>
         <Text style={styles.headerSub}>
           {savedDecks.length} deck{savedDecks.length !== 1 ? "s" : ""} saved
         </Text>
@@ -60,7 +65,13 @@ export default function LibraryScreen() {
 
       {/* Search */}
       <View style={styles.searchContainer}>
-        <Text style={styles.searchIcon}>🔍</Text>
+        {/* Replaced search emoji */}
+        <Ionicons
+          name="search"
+          size={20}
+          color={Colors.text.muted}
+          style={{ marginRight: 8 }}
+        />
         <TextInput
           style={styles.searchInput}
           placeholder="Search saved decks..."
@@ -70,7 +81,8 @@ export default function LibraryScreen() {
         />
         {searchQuery.length > 0 && (
           <TouchableOpacity onPress={() => setSearchQuery("")}>
-            <Text style={styles.clearBtn}>✕</Text>
+            {/* Replaced clear X */}
+            <Ionicons name="close-circle" size={20} color={Colors.text.muted} />
           </TouchableOpacity>
         )}
       </View>
@@ -86,32 +98,26 @@ export default function LibraryScreen() {
             entering={FadeInDown.springify()}
             style={styles.emptyCard}
           >
-            {/* Decorative top accent bar */}
             <View style={styles.emptyCardAccent} />
-
-            {/* Sparky with mood ring */}
             <View style={styles.emptyMascotWrapper}>
-              {/* Large pastel ring backdrop */}
               <View style={styles.emptyMascotRing} />
               <SparkyMascot size={150} mood="sad" showRing={false} showShadow />
             </View>
-
             <Text style={styles.emptyTitle}>It's quiet in here...</Text>
             <Text style={styles.emptySubtitle}>
               Generate some magic flashcard decks and save them to build your
               vault!
             </Text>
-
-            {/* CTA button */}
             <TouchableOpacity
               style={styles.emptyCtaButton}
               onPress={() => router.push("/(tabs)/input")}
               activeOpacity={0.85}
             >
-              <Text style={styles.emptyCtaText}>✨ Create my first deck</Text>
+              <Text style={styles.emptyCtaText}>
+                <Ionicons name="sparkles" size={16} color="white" /> Create my
+                first deck
+              </Text>
             </TouchableOpacity>
-
-            {/* Fun decorative dots */}
             <View style={styles.emptyDots}>
               {["#C3BDFF", "#FFB3CF", "#FFD98A", "#93CFEE"].map((c, i) => (
                 <View key={i} style={[styles.dot, { backgroundColor: c }]} />
@@ -127,7 +133,6 @@ export default function LibraryScreen() {
             <View
               style={[styles.emptyCardAccent, { backgroundColor: "#FFD98A" }]}
             />
-
             <View style={styles.emptyMascotWrapper}>
               <View
                 style={[
@@ -142,7 +147,6 @@ export default function LibraryScreen() {
                 showShadow
               />
             </View>
-
             <Text style={styles.emptyTitle}>No matches found</Text>
             <Text style={styles.emptySubtitle}>
               Try a different search term.
@@ -171,7 +175,13 @@ export default function LibraryScreen() {
                     {deck.title}
                   </Text>
                   <Text style={styles.deckCount}>
-                    🃏 {deck.cards.length} cards
+                    {/* Replaced card emoji */}
+                    <Ionicons
+                      name="albums-outline"
+                      size={14}
+                      color={Colors.text.muted}
+                    />{" "}
+                    {deck.cards.length} cards
                   </Text>
                 </View>
                 <View style={styles.deckActions}>
@@ -179,13 +189,15 @@ export default function LibraryScreen() {
                     style={styles.playButton}
                     onPress={() => handlePlay(deck)}
                   >
-                    <Text style={styles.playIcon}>▶</Text>
+                    {/* Replaced play emoji */}
+                    <Ionicons name="play" size={18} color={Colors.primary} />
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.deleteButton}
                     onPress={() => handleDelete(deck.id, deck.title)}
                   >
-                    <Text style={styles.deleteIcon}>🗑</Text>
+                    {/* Replaced trash emoji */}
+                    <Ionicons name="trash" size={18} color={Colors.error} />
                   </TouchableOpacity>
                 </View>
               </TouchableOpacity>
@@ -202,7 +214,6 @@ const styles = StyleSheet.create({
   header: { paddingHorizontal: 24, paddingTop: 20, paddingBottom: 4 },
   headerTitle: { fontSize: 32, fontWeight: "900", color: Colors.text.dark },
   headerSub: { fontSize: 14, color: Colors.text.muted, marginTop: 4 },
-
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -217,17 +228,13 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 2,
   },
-  searchIcon: { fontSize: 16, marginRight: 10 },
   searchInput: {
     flex: 1,
     paddingVertical: 14,
     fontSize: 16,
     color: Colors.text.dark,
   },
-  clearBtn: { fontSize: 16, color: Colors.text.muted, padding: 4 },
   content: { flexGrow: 1, paddingHorizontal: 24, paddingBottom: 40 },
-
-  // ── Empty state card ──────────────────────────────────────────────────
   emptyCard: {
     backgroundColor: Colors.surface,
     borderRadius: 32,
@@ -290,22 +297,9 @@ const styles = StyleSheet.create({
     elevation: 5,
     marginBottom: 20,
   },
-  emptyCtaText: {
-    color: "white",
-    fontWeight: "800",
-    fontSize: 16,
-  },
-  emptyDots: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-  },
-
-  // ── Deck cards ────────────────────────────────────────────────────────
+  emptyCtaText: { color: "white", fontWeight: "800", fontSize: 16 },
+  emptyDots: { flexDirection: "row", gap: 8 },
+  dot: { width: 10, height: 10, borderRadius: 5 },
   deckCard: {
     flexDirection: "row",
     alignItems: "center",
@@ -341,8 +335,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
+    paddingLeft: 3, // visual centering for play icon
   },
-  playIcon: { fontSize: 14, color: Colors.primary },
   deleteButton: {
     backgroundColor: "#FFEBEE",
     width: 36,
@@ -351,5 +345,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  deleteIcon: { fontSize: 14 },
 });

@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
 import {
@@ -33,7 +34,7 @@ const ActionCard = ({
   delay = 0,
 }: {
   title: string;
-  icon: string;
+  icon: keyof typeof Ionicons.glyphMap;
   color: string;
   description: string;
   onPress: () => void;
@@ -83,7 +84,12 @@ const ActionCard = ({
         activeOpacity={0.9}
       >
         <Animated.View style={cardStyle}>
-          <Text style={styles.cardIcon}>{icon}</Text>
+          <Ionicons
+            name={icon}
+            size={36}
+            color={color}
+            style={{ marginBottom: 10, alignSelf: "center" }}
+          />
           <Text style={styles.cardText}>{title}</Text>
           <Text style={styles.cardDesc}>{description}</Text>
         </Animated.View>
@@ -138,8 +144,8 @@ export default function HomeDashboard() {
     minutesStudiedToday,
     dailyGoalMinutes,
     savedDecks,
-    totalSessions = 0, // Fallback to 0 if not yet added to store
-    quizAverage = 0, // Fallback to 0 if not yet added to store
+    totalSessions = 0,
+    quizAverage = 0,
   } = useStudyStore();
   const { name } = useUserStore();
   const isOffline = useOfflineStatus();
@@ -187,8 +193,9 @@ export default function HomeDashboard() {
 
       {isOffline && (
         <View style={styles.offlineBanner}>
+          <Ionicons name="cloud-offline" size={16} color="white" />
           <Text style={styles.offlineText}>
-            ⚠️ Offline — AI features are disabled
+            Offline — AI features are disabled
           </Text>
         </View>
       )}
@@ -205,31 +212,42 @@ export default function HomeDashboard() {
           {/* Left: greeting text */}
           <View style={styles.headerLeft}>
             <Text style={styles.greetingSmall}>{greeting},</Text>
-            <Text style={styles.greeting}>{name || "Learner"}! 👋</Text>
+            <Text style={styles.greeting}>{name || "Learner"}!</Text>
             <Text style={styles.subGreeting}>Ready to study smarter?</Text>
 
-            {/* Streak badge moved under greeting so it doesn't compete with Sparky */}
+            {/* Streak badge */}
             <View style={styles.streakBadge}>
-              <Text style={styles.streakText}>🔥 {streak} day streak</Text>
+              <Ionicons
+                name="flame"
+                size={14}
+                color={Colors.secondary}
+                style={{ marginRight: 4 }}
+              />
+              <Text style={styles.streakText}>{streak} day streak</Text>
             </View>
           </View>
 
           {/* Right: Sparky with a proper mascot bubble */}
           <View style={styles.sparkyBubble}>
-            {/* Decorative concentric rings */}
             <View style={[styles.sparkyRingOuter]} />
             <View style={[styles.sparkyRingInner]} />
 
             <SparkyMascot
               size={100}
               mood="happy"
-              showRing={false} // We draw our own rings above
-              showShadow={false} // No shadow inside the bubble
+              showRing={false}
+              showShadow={false}
             />
 
             {/* Floating speech bubble */}
             <View style={styles.speechBubble}>
-              <Text style={styles.speechText}>Let's go! ✨</Text>
+              <Text style={styles.speechText}>Let's go!</Text>
+              <Ionicons
+                name="flash"
+                size={12}
+                color="white"
+                style={{ marginLeft: 4 }}
+              />
             </View>
           </View>
         </Animated.View>
@@ -238,7 +256,10 @@ export default function HomeDashboard() {
         <Animated.View entering={FadeInDown.delay(100).springify()}>
           <View style={styles.progressCard}>
             <View style={styles.progressHeader}>
-              <Text style={styles.cardTitle}>📅 Daily Goal</Text>
+              <View style={styles.cardTitleRow}>
+                <Ionicons name="calendar" size={20} color={Colors.text.dark} />
+                <Text style={styles.cardTitle}>Daily Goal</Text>
+              </View>
               <Text style={styles.progressPct}>{Math.round(progress)}%</Text>
             </View>
             <Text style={styles.progressSub}>
@@ -275,7 +296,7 @@ export default function HomeDashboard() {
         <View style={styles.grid}>
           <ActionCard
             title="Summarize"
-            icon="✨"
+            icon="document-text"
             description="Turn notes into key points"
             color={Colors.primary}
             onPress={() => router.push("/(tabs)/input")}
@@ -283,7 +304,7 @@ export default function HomeDashboard() {
           />
           <ActionCard
             title="Flashcards"
-            icon="🃏"
+            icon="albums"
             description="Flip & learn"
             color={Colors.secondary}
             onPress={() => router.push("/flashcards")}
@@ -291,7 +312,7 @@ export default function HomeDashboard() {
           />
           <ActionCard
             title="Quiz Mode"
-            icon="🧩"
+            icon="extension-puzzle"
             description="Test your knowledge"
             color={Colors.warning}
             onPress={() => router.push("/quiz")}
@@ -299,7 +320,7 @@ export default function HomeDashboard() {
           />
           <ActionCard
             title="Voice Tutor"
-            icon="🎙️"
+            icon="mic"
             description="Listen & learn"
             color={Colors.accent}
             onPress={() => router.push("/voice")}
@@ -311,20 +332,32 @@ export default function HomeDashboard() {
         <Animated.View entering={FadeInDown.delay(600).springify()}>
           <View style={styles.statsRow}>
             <View style={styles.statCard}>
-              <Text style={styles.statEmoji}>📚</Text>
-              {/* Dynamic Sessions */}
+              <Ionicons
+                name="time"
+                size={24}
+                color={Colors.primary}
+                style={{ marginBottom: 6 }}
+              />
               <Text style={styles.statValue}>{totalSessions}</Text>
               <Text style={styles.statLabel}>Sessions</Text>
             </View>
             <View style={[styles.statCard, styles.statCardMid]}>
-              <Text style={styles.statEmoji}>🃏</Text>
-              {/* Dynamic Cards Count */}
+              <Ionicons
+                name="layers"
+                size={24}
+                color={Colors.secondary}
+                style={{ marginBottom: 6 }}
+              />
               <Text style={styles.statValue}>{totalCards}</Text>
               <Text style={styles.statLabel}>Cards Learned</Text>
             </View>
             <View style={styles.statCard}>
-              <Text style={styles.statEmoji}>🏆</Text>
-              {/* Dynamic Quiz Avg */}
+              <Ionicons
+                name="trophy"
+                size={24}
+                color={Colors.warning}
+                style={{ marginBottom: 6 }}
+              />
               <Text style={styles.statValue}>{quizAverage}%</Text>
               <Text style={styles.statLabel}>Quiz Avg.</Text>
             </View>
@@ -343,9 +376,12 @@ const styles = StyleSheet.create({
   },
   blob: { position: "absolute", borderRadius: 999, zIndex: 0 },
   offlineBanner: {
+    flexDirection: "row",
+    gap: 8,
     backgroundColor: Colors.error,
     padding: 10,
     alignItems: "center",
+    justifyContent: "center",
     zIndex: 10,
   },
   offlineText: { color: "white", fontWeight: "bold", fontSize: 13 },
@@ -368,6 +404,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   streakBadge: {
+    flexDirection: "row",
+    alignItems: "center",
     alignSelf: "flex-start",
     backgroundColor: "#FFE5EC",
     paddingHorizontal: 12,
@@ -383,7 +421,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginLeft: 8,
-    // Push Sparky up a little so her shadow/feet sit on a natural baseline
     marginTop: -8,
   },
   sparkyRingOuter: {
@@ -404,8 +441,9 @@ const styles = StyleSheet.create({
     borderColor: "#D0CBFF",
     top: 14,
   },
-  // Tiny speech bubble that pops above the ring
   speechBubble: {
+    flexDirection: "row",
+    alignItems: "center",
     position: "absolute",
     top: -8,
     right: -4,
@@ -440,6 +478,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 6,
+  },
+  cardTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
   },
   cardTitle: { fontSize: 18, fontWeight: "bold", color: Colors.text.dark },
   progressPct: { fontSize: 22, fontWeight: "900", color: Colors.accent },
@@ -528,7 +571,6 @@ const styles = StyleSheet.create({
   statCardMid: {
     backgroundColor: "#EAE8FF",
   },
-  statEmoji: { fontSize: 22, marginBottom: 6 },
   statValue: { fontSize: 22, fontWeight: "900", color: Colors.text.dark },
   statLabel: {
     fontSize: 11,
