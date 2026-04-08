@@ -1,10 +1,8 @@
+import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { Platform, StyleSheet, View } from "react-native";
 import { Colors } from "../../constants/colors";
-// 1. Import Ionicons
-import { Ionicons } from "@expo/vector-icons";
 
-// 2. Update the helper to accept Ionicons names
 const TabIcon = ({
   name,
   focused,
@@ -15,7 +13,7 @@ const TabIcon = ({
   <View style={[styles.iconContainer, focused && styles.iconFocused]}>
     <Ionicons
       name={name}
-      size={24}
+      size={22}
       color={focused ? Colors.primary : Colors.text.muted}
     />
   </View>
@@ -35,19 +33,18 @@ export default function TabLayout() {
           shadowOffset: { width: 0, height: -4 },
           shadowOpacity: 0.1,
           shadowRadius: 12,
-          height: Platform.OS === "android" ? 75 : 85,
-          paddingBottom: Platform.OS === "android" ? 10 : 25,
-          paddingTop: 10,
+          height: Platform.OS === "android" ? 68 : 85,
+          paddingBottom: Platform.OS === "android" ? 8 : 25,
+          paddingTop: 6,
         },
         tabBarLabelStyle: {
           fontFamily: "System",
           fontWeight: "600",
-          fontSize: 12,
+          fontSize: 11,
         },
         headerShown: false,
       }}
     >
-      {/* 3. Swap emojis for real icon names */}
       <Tabs.Screen
         name="index"
         options={{
@@ -104,8 +101,9 @@ const styles = StyleSheet.create({
   iconContainer: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 8,
-    borderRadius: 20,
+    width: 40,
+    height: 32,
+    borderRadius: 16,
   },
   iconFocused: {
     backgroundColor: "#F0EFFF",
